@@ -3,8 +3,25 @@
  */
 require('colors');
 var Pm2Socket = require('./socket')
-var getIp = require('./getip');
 module.exports = class Pm2SocketIO {
+    static getIp(){
+        var os = require('os');
+        var interfaces = os.networkInterfaces();
+        module.exports = function (){
+            for (var k in interfaces) {
+                for (var k2 in interfaces[k]) {
+                    var address = interfaces[k][k2];
+                    if (address.family === 'IPv4' && !address.internal) {
+                        return address.address;
+                    }
+                }
+            }
+            return 'localhost';
+        }
+    }
+    static getInstanceId(){
+        return parseInt(process.env.NODE_APP_INSTANCE || 0);
+    }
     constructor(opts){
         opts = Object.assign({},{
             ips:[],
@@ -12,10 +29,10 @@ module.exports = class Pm2SocketIO {
         },opts)
         this.addresses = opts.ips;
         this.localIp = opts.localIp;
-        this.instanceId = parseInt(process.env.NODE_APP_INSTANCE || 0);
+        this.instanceId = Pm2SocketIO.getInstanceId();
         try {
             if(opts.localIp!='localhost') {
-                this.localIp = getIp();
+                this.localIp = Pm2SocketIO.getIp();
             }
             if (this.addresses.indexOf(this.localIp) == -1 && this.addresses.length >= 2) {
                 throw new Error('本机IP不在IP列表当中,请在第二个参数ips中添加');

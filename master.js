@@ -1,8 +1,8 @@
 'use strict';
 
-var _assign = require('babel-runtime/core-js/object/assign');
+var _extends2 = require('babel-runtime/helpers/extends');
 
-var _assign2 = _interopRequireDefault(_assign);
+var _extends3 = _interopRequireDefault(_extends2);
 
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
@@ -16,21 +16,44 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 require('colors');
 var Pm2Socket = require('./socket');
-var getIp = require('./getip');
 module.exports = function () {
+    (0, _createClass3.default)(Pm2SocketIO, null, [{
+        key: 'getIp',
+        value: function getIp() {
+            var os = require('os');
+            var interfaces = os.networkInterfaces();
+            module.exports = function () {
+                for (var k in interfaces) {
+                    for (var k2 in interfaces[k]) {
+                        var address = interfaces[k][k2];
+                        if (address.family === 'IPv4' && !address.internal) {
+                            return address.address;
+                        }
+                    }
+                }
+                return 'localhost';
+            };
+        }
+    }, {
+        key: 'getInstanceId',
+        value: function getInstanceId() {
+            return parseInt(process.env.NODE_APP_INSTANCE || 0);
+        }
+    }]);
+
     function Pm2SocketIO(opts) {
         (0, _classCallCheck3.default)(this, Pm2SocketIO);
 
-        opts = (0, _assign2.default)({}, {
+        opts = (0, _extends3.default)({}, {
             ips: [],
             localIp: 'localhost'
         }, opts);
         this.addresses = opts.ips;
         this.localIp = opts.localIp;
-        this.instanceId = parseInt(process.env.NODE_APP_INSTANCE || 0);
+        this.instanceId = Pm2SocketIO.getInstanceId();
         try {
             if (opts.localIp != 'localhost') {
-                this.localIp = getIp();
+                this.localIp = Pm2SocketIO.getIp();
             }
             if (this.addresses.indexOf(this.localIp) == -1 && this.addresses.length >= 2) {
                 throw new Error('本机IP不在IP列表当中,请在第二个参数ips中添加');

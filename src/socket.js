@@ -20,4 +20,7 @@ module.exports = class Socket {
             cb(...data)
         })
     }
+    disconnect(...data) {
+        this.socket.disconnect(...data);
+    }
 }

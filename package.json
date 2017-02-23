@@ -1,0 +1,26 @@
+{
+  "name": "socketio-with-pm2",
+  "version": "0.1.0",
+  "description": "This is an nodejs plugin for socketio, which support socketio run with the cluster mode of pm2",
+  "main": "index.js",
+  "scripts": {
+    "compile": "babel src --out-dir .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coderrorer/socketio-with-pm2.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/coderrorer/socketio-with-pm2/issues"
+  },
+  "homepage": "https://github.com/coderrorer/socketio-with-pm2#readme",
+  "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-stage-2": "^6.22.0"
+  }
+}

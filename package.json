@@ -1,6 +1,6 @@
 {
   "name": "socketio-with-pm2",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "This is an nodejs plugin for socketio, which support socketio run with the cluster mode of pm2",
   "main": "index.js",
   "scripts": {
@@ -25,6 +25,7 @@
     "babel-preset-stage-2": "^6.22.0"
   },
   "dependencies": {
+    "babel-plugin-transform-runtime": "^6.23.0",
     "colors": "^1.1.2",
     "socket.io": "^1.7.3",
     "socket.io-client": "^1.7.3"

@@ -4,34 +4,34 @@
 require('colors');
 var Pm2Socket = require('./socket')
 module.exports = class Pm2SocketIO {
-    static getIp(){
+    static getIp() {
         var os = require('os');
         var interfaces = os.networkInterfaces();
-        module.exports = function (){
-            for (var k in interfaces) {
-                for (var k2 in interfaces[k]) {
-                    var address = interfaces[k][k2];
-                    if (address.family === 'IPv4' && !address.internal) {
-                        return address.address;
-                    }
+        for (var k in interfaces) {
+            for (var k2 in interfaces[k]) {
+                var address = interfaces[k][k2];
+                if (address.family === 'IPv4' && !address.internal) {
+                    return address.address;
                 }
             }
-            return 'localhost';
         }
+        return 'localhost';
     }
-    static getInstanceId(){
+
+    static getInstanceId() {
         return parseInt(process.env.NODE_APP_INSTANCE || 0);
     }
-    constructor(opts){
-        opts = Object.assign({},{
-            ips:[],
-            localIp:'localhost'
-        },opts)
+
+    constructor(opts) {
+        opts = Object.assign({}, {
+            ips: [],
+            localIp: 'localhost'
+        }, opts)
         this.addresses = opts.ips;
         this.localIp = opts.localIp;
         this.instanceId = Pm2SocketIO.getInstanceId();
         try {
-            if(opts.localIp!='localhost') {
+            if (opts.localIp != 'localhost') {
                 this.localIp = Pm2SocketIO.getIp();
             }
             if (this.addresses.indexOf(this.localIp) == -1 && this.addresses.length >= 2) {
@@ -45,7 +45,8 @@ module.exports = class Pm2SocketIO {
             console.error(e)
         }
     }
-    listen(port){
+
+    listen(port) {
         const server = require("http").createServer((req, res)=> {
         });
         server.listen(port + this.instanceId);
@@ -73,7 +74,7 @@ module.exports = class Pm2SocketIO {
                     } catch (e) {
                         console.error(e)
                     }
-                    connect.on('@toServer', (event,...data)=> {
+                    connect.on('@toServer', (event, ...data)=> {
                         if (this.instanceId != id || ip != this.localIp) {
                             this.io.sockets.emit(event, ...data);
                         }
@@ -84,20 +85,22 @@ module.exports = class Pm2SocketIO {
         })
         return this;
     }
-    on(event,cb){
-        if(event == 'connection') {
-            this.io.on(event,socket=>{
-                var s = new Pm2Socket(socket,this.io);
+
+    on(event, cb) {
+        if (event == 'connection') {
+            this.io.on(event, socket=> {
+                var s = new Pm2Socket(socket, this.io);
                 cb(s);
             })
         }
-        else this.io.on(event,function(...data){
+        else this.io.on(event, function (...data) {
             cb(...data);
         })
     }
-    emit(event,...data) {
-        this.io.sockets.emit('@toServer',event,...data);
-        this.io.sockets.emit(event,...data);
+
+    emit(event, ...data) {
+        this.io.sockets.emit('@toServer', event, ...data);
+        this.io.sockets.emit(event, ...data);
     }
 
 }

@@ -16,6 +16,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 require('colors');
 var Pm2Socket = require('./socket');
+var Pm2Namespace = require('./namespace');
 module.exports = function () {
     (0, _createClass3.default)(Pm2SocketIO, null, [{
         key: 'getIp',
@@ -79,7 +80,6 @@ module.exports = function () {
             for (var i = 0; i < (process.env.instances || 1); i++) {
                 processList.push(i);
             }
-
             this.addresses.map(function (ip) {
                 processList.map(function (id) {
                     setTimeout(function () {
@@ -93,15 +93,15 @@ module.exports = function () {
                         } catch (e) {
                             console.error(e);
                         }
-                        connect.on('@toServer', function (event) {
-                            for (var _len = arguments.length, data = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-                                data[_key - 1] = arguments[_key];
+                        connect.on('@toServer', function (event, namespace) {
+                            for (var _len = arguments.length, data = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+                                data[_key - 2] = arguments[_key];
                             }
 
                             if (_this.instanceId != id || ip != _this.localIp) {
-                                var _io$sockets;
+                                var _io$of$sockets;
 
-                                (_io$sockets = _this.io.sockets).emit.apply(_io$sockets, [event].concat(data));
+                                (_io$of$sockets = _this.io.of(namespace || '/').sockets).emit.apply(_io$of$sockets, [event].concat(data));
                             }
                         });
                     }, 0);
@@ -126,14 +126,19 @@ module.exports = function () {
     }, {
         key: 'emit',
         value: function emit(event) {
-            var _io$sockets2, _io$sockets3;
+            var _io$sockets, _io$sockets2;
 
             for (var _len2 = arguments.length, data = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
                 data[_key2 - 1] = arguments[_key2];
             }
 
-            (_io$sockets2 = this.io.sockets).emit.apply(_io$sockets2, ['@toServer', event].concat(data));
-            (_io$sockets3 = this.io.sockets).emit.apply(_io$sockets3, [event].concat(data));
+            (_io$sockets = this.io.sockets).emit.apply(_io$sockets, ['@toServer', event, '/'].concat(data));
+            (_io$sockets2 = this.io.sockets).emit.apply(_io$sockets2, [event].concat(data));
+        }
+    }, {
+        key: 'of',
+        value: function of(namespace) {
+            return new Pm2Namespace(this.io, namespace);
         }
     }]);
     return Pm2SocketIO;

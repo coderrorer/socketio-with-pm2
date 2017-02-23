@@ -3,6 +3,7 @@
  */
 require('colors');
 var Pm2Socket = require('./socket')
+var Pm2Namespace = require('./namespace');
 module.exports = class Pm2SocketIO {
     static getIp() {
         var os = require('os');
@@ -60,7 +61,6 @@ module.exports = class Pm2SocketIO {
         for (let i = 0; i < (process.env.instances || 1); i++) {
             processList.push(i);
         }
-
         this.addresses.map(ip=> {
             processList.map(id=> {
                 setTimeout(()=> {
@@ -74,9 +74,9 @@ module.exports = class Pm2SocketIO {
                     } catch (e) {
                         console.error(e)
                     }
-                    connect.on('@toServer', (event, ...data)=> {
+                    connect.on('@toServer', (event, namespace, ...data)=> {
                         if (this.instanceId != id || ip != this.localIp) {
-                            this.io.sockets.emit(event, ...data);
+                            this.io.of(namespace || '/').sockets.emit(event, ...data);
                         }
                     })
                 }, 0)
@@ -99,8 +99,12 @@ module.exports = class Pm2SocketIO {
     }
 
     emit(event, ...data) {
-        this.io.sockets.emit('@toServer', event, ...data);
+        this.io.sockets.emit('@toServer', event, '/', ...data);
         this.io.sockets.emit(event, ...data);
+    }
+
+    of(namespace) {
+        return new Pm2Namespace(this.io, namespace);
     }
 
 }

@@ -2,8 +2,9 @@
  * Created by denniszhang on 17/2/23.
  */
 module.exports = class Socket {
-    constructor(socket,io){
+    constructor(socket,io,namespace){
         this.socket = socket;
+        this.namespace = namespace;
         this.io = io;
         let self = this;
         this.broadcast = {
@@ -11,16 +12,19 @@ module.exports = class Socket {
         }
     }
     broadcastEmit(event,...data) {
-        this.io.emit('@toServer',event,...data);
+        this.io.emit('@toServer',event,this.namespace||'/',...data);
         this.socket.broadcast.emit(event,...data);
-        
     }
+
     on(event,cb){
         this.socket.on(event,(...data)=>{
             cb(...data)
         })
     }
-    disconnect(...data) {
-        this.socket.disconnect(...data);
+    emit(){
+
+    }
+    disconnect(close){
+        this.socket.disconnect(close);
     }
 }

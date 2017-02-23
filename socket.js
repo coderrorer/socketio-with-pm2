@@ -11,10 +11,11 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 module.exports = function () {
-    function Socket(socket, io) {
+    function Socket(socket, io, namespace) {
         (0, _classCallCheck3.default)(this, Socket);
 
         this.socket = socket;
+        this.namespace = namespace;
         this.io = io;
         var self = this;
         this.broadcast = {
@@ -31,7 +32,7 @@ module.exports = function () {
                 data[_key - 1] = arguments[_key];
             }
 
-            (_io = this.io).emit.apply(_io, ['@toServer', event].concat(data));
+            (_io = this.io).emit.apply(_io, ['@toServer', event, this.namespace || '/'].concat(data));
             (_socket$broadcast = this.socket.broadcast).emit.apply(_socket$broadcast, [event].concat(data));
         }
     }, {
@@ -40,6 +41,14 @@ module.exports = function () {
             this.socket.on(event, function () {
                 cb.apply(undefined, arguments);
             });
+        }
+    }, {
+        key: 'emit',
+        value: function emit() {}
+    }, {
+        key: 'disconnect',
+        value: function disconnect(close) {
+            this.socket.disconnect(close);
         }
     }]);
     return Socket;

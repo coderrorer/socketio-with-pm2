@@ -6,13 +6,12 @@ module.exports = class Namespace {
     constructor(io, namespace) {
         this.io = io;
         this.namespace = namespace;
-        
     }
 
     on(event, cb) {
         if (event == 'connection') {
             this.io.of(this.namespace).on(event, socket=> {
-                var s = new Pm2Socket(socket, this.io.of(this.namespace));
+                var s = new Pm2Socket(socket, this.io,this.namespace);
                 cb(s);
             })
         }

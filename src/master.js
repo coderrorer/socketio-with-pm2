@@ -64,7 +64,6 @@ module.exports = class Pm2SocketIO {
         this.addresses.map(ip=> {
             processList.map(id=> {
                 setTimeout(()=> {
-                    console.log(`${this.localIp}:${port + this.instanceId} try to connect to ${ip}:${id}`)
                     let url = `http://${ip}:${port + parseInt(id)}`;
 
                     let connect;
@@ -75,8 +74,9 @@ module.exports = class Pm2SocketIO {
                         console.error(e)
                     }
                     connect.on('@toServer', (event, namespace, ...data)=> {
+
                         if (this.instanceId != id || ip != this.localIp) {
-                            this.io.of(namespace || '/').sockets.emit(event, ...data);
+                            this.io.of(namespace || '/').emit(event, ...data);
                         }
                     })
                 }, 0)

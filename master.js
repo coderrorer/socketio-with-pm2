@@ -83,7 +83,6 @@ module.exports = function () {
             this.addresses.map(function (ip) {
                 processList.map(function (id) {
                     setTimeout(function () {
-                        console.log(_this.localIp + ':' + (port + _this.instanceId) + ' try to connect to ' + ip + ':' + id);
                         var url = 'http://' + ip + ':' + (port + parseInt(id));
 
                         var connect = void 0;
@@ -99,9 +98,9 @@ module.exports = function () {
                             }
 
                             if (_this.instanceId != id || ip != _this.localIp) {
-                                var _io$of$sockets;
+                                var _io$of;
 
-                                (_io$of$sockets = _this.io.of(namespace || '/').sockets).emit.apply(_io$of$sockets, [event].concat(data));
+                                (_io$of = _this.io.of(namespace || '/')).emit.apply(_io$of, [event].concat(data));
                             }
                         });
                     }, 0);

@@ -26,7 +26,7 @@ module.exports = function () {
 
             if (event == 'connection') {
                 this.io.of(this.namespace).on(event, function (socket) {
-                    var s = new Pm2Socket(socket, _this.io.of(_this.namespace));
+                    var s = new Pm2Socket(socket, _this.io, _this.namespace);
                     cb(s);
                 });
             } else this.io.of(this.namespace).on(event, function () {

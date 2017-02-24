@@ -44,7 +44,15 @@ module.exports = function () {
         }
     }, {
         key: 'emit',
-        value: function emit() {}
+        value: function emit(event) {
+            var _socket;
+
+            for (var _len2 = arguments.length, data = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+                data[_key2 - 1] = arguments[_key2];
+            }
+
+            (_socket = this.socket).emit.apply(_socket, [event].concat(data));
+        }
     }, {
         key: 'disconnect',
         value: function disconnect(close) {

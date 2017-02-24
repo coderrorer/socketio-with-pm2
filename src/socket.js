@@ -21,8 +21,8 @@ module.exports = class Socket {
             cb(...data)
         })
     }
-    emit(){
-
+    emit(event,...data){
+        this.socket.emit(event,...data);
     }
     disconnect(close){
         this.socket.disconnect(close);
